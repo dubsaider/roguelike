@@ -9,9 +9,8 @@
 
 using namespace std;
 
-int main() {
-  srand(time(nullptr));
-  Map map("map.txt");
+int Play(const std::string& file){
+  Map map(file);
   while (map.GetKnightHp() > 0 && map.SearchCharter('P')) {
     if (_kbhit()) {
       switch (getch()) {
@@ -33,6 +32,17 @@ int main() {
         }
       }
     }
+  }
+  if (map.GetKnightHp() < 0)
+    return 0;
+  else
+    return 1;
+}
+
+int main() {
+  srand(time(nullptr));
+  if (Play("map1.txt")){
+    Play("map2.txt");
   }
   return 0;
 }

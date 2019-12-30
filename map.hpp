@@ -16,7 +16,7 @@ class Map {
     map_[y][x] = a;
   }
 
-  Map(const std::string& file) : wk_(0), zk_(0) {
+  Map(const std::string &file) : wk_(0), zk_(0) {
     std::ifstream fin(file);
     int i = 0, l = 0;
     char str[25];
@@ -92,9 +92,66 @@ class Map {
     return false;
   }
 
+  void Trigger() {
+    srand(time(0));
+    for (int i = 0; i < zk_; i++) {
+      int rz = rand() % 2 + 0;
+      int r = rand() % 2 + 0 == 1 ? 1 : -1;
+      if (rz == 1) {
+        if ((z_[i].GetPos().x_ + r) > -1 && (z_[i].GetPos().x_ + r) < x_
+            && map_[z_[i].GetPos().y_][z_[i].GetPos().x_ + r] == '.') {
+          CreatMap('.', z_[i].GetPos().x_, z_[i].GetPos().y_);
+          CreatMap('Z', z_[i].GetPos().x_ + r, z_[i].GetPos().y_);
+          Point a;
+          a.x_ = z_[i].GetPos().x_ + r;
+          a.y_ = z_[i].GetPos().y_;
+          z_[i].SetPos(a);
+        }
+      } else {
+        if ((z_[i].GetPos().y_ + r) > -1 && (z_[i].GetPos().y_ + r) < x_
+            && map_[z_[i].GetPos().y_ + r][z_[i].GetPos().x_] == '.') {
+          CreatMap('.', d_.GetPos().x_, z_[i].GetPos().y_);
+          CreatMap('Z', d_.GetPos().x_, z_[i].GetPos().y_ + r);
+          Point a;
+          a.x_ = z_[i].GetPos().x_;
+          a.y_ = z_[i].GetPos().y_ + r;
+          z_[i].SetPos(a);
+        }
+      }
+    }
+    int rz = rand() % 2 + 0;
+    int r = rand() % 2 + 0 == 1 ? 1 : -1;
+    if (rz == 1) {
+      if ((d_.GetPos().x_ + r) > -1 &&
+          (d_.GetPos().x_ + r) < x_ &&
+          map_[d_.GetPos().y_][d_.GetPos().x_ + r] == '.') {
+        CreatMap('.', d_.GetPos().x_, d_.GetPos().y_);
+        CreatMap('D', d_.GetPos().x_ + r, d_.GetPos().y_);
+        Point a;
+        a.x_ = d_.GetPos().x_ + r;
+        a.y_ = d_.GetPos().y_;
+        d_.SetPos(a);
+      }
+    } else {
+      if ((d_.GetPos().y_ + r) > -1 &&
+          (d_.GetPos().y_ + r) < x_ &&
+          map_[d_.GetPos().y_ + r][d_.GetPos().x_] == '.') {
+        CreatMap('.', d_.GetPos().x_, d_.GetPos().y_);
+        CreatMap('D', d_.GetPos().x_, d_.GetPos().y_ + r);
+        Point a;
+        a.x_ = d_.GetPos().x_;
+        a.y_ = d_.GetPos().y_ + r;
+        d_.SetPos(a);
+      }
+    }
+
+  }
+
   void Walk(int dx, int dy) {
-    if (((k_.GetPos().x_ + dx) > -1 && (k_.GetPos().x_ + dx) < x_)
-        && ((k_.GetPos().y_ + dy) > -1 && (k_.GetPos().y_ + dy) < x_)) {
+    if (((k_.GetPos().x_ + dx) > -1 &&
+        (k_.GetPos().x_ + dx) < x_) &&
+        ((k_.GetPos().y_ + dy) > -1 &&
+            (k_.GetPos().y_ + dy) < x_)) {
       switch (map_[k_.GetPos().y_ + dy][k_.GetPos().x_ + dx]) {
         case '.': {
           CreatMap('K', k_.GetPos().x_ + dx, k_.GetPos().y_ + dy);
@@ -113,13 +170,14 @@ class Map {
           CreatMap('.', k_.GetPos().x_, k_.GetPos().y_);
           k_.SetPos(a);
           system("cls");
-          std::cout << "You win!";
+          printf("You win!");
           system("pause");
           break;
         }
         case 'Z': {
           for (int i = 0; i < zk_; i++) {
-            if (z_[i].GetPos().x_ == k_.GetPos().x_ + dx && z_[i].GetPos().y_ == k_.GetPos().y_ + dy) {
+            if (z_[i].GetPos().x_ == k_.GetPos().x_ + dx &&
+                z_[i].GetPos().y_ == k_.GetPos().y_ + dy) {
               k_.Hit(z_[i].GetDamage());
               z_[i].Hit(k_.GetDamage());
               if (z_[i].GetHp() <= 0) {
@@ -150,6 +208,7 @@ class Map {
         }
       }
     }
+    Trigger();
     ShowMap();
   }
 };
